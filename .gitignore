@@ -1,0 +1,4 @@
+peers
+.terraform/
+terraform.tfstate*
+ip.txt

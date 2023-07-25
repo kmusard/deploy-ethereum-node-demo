@@ -1,0 +1,27 @@
+version: "3"
+services:
+  geth:
+    container_name: geth
+    image: ethereum/client-go:v1.12.0
+    command: --ipcdisable --http.addr=0.0.0.0 --authrpc.addr=0.0.0.0 --authrpc.vhosts='*' --authrpc.jwtsecret=/jwt.hex
+    ports:
+      - 8545:8545
+      - 8551:8551
+      - 30303:30303
+    volumes:
+      - /mnt/d/ethereum/execution:/root/.ethereum
+      - ./jwt.hex.example:/jwt.hex
+  prysm:
+    container_name: prysm
+    image: gcr.io/prysmaticlabs/prysm/beacon-chain:stable
+    command: --accept-terms-of-use --checkpoint-sync-url=http://testing.mainnet.beacon-api.nimbus.team/ --genesis-beacon-api-url=http://testing.mainnet.beacon-api.nimbus.team/ --datadir=/data --jwt-secret=/jwt.hex --rpc-host=0.0.0.0 --grpc-gateway-host=0.0.0.0 --monitoring-host=0.0.0.0 --execution-endpoint=http://geth:8551
+    ports:
+      - 3500:3500
+      - 4000:4000
+      - 12000:12000/udp
+      - 13000:13000
+    volumes:
+      - /mnt/d/ethereum/consensus:/data
+      - ./jwt.hex.example:/jwt.hex
+    depends_on:
+      - geth
