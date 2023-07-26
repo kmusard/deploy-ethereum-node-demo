@@ -1,6 +1,6 @@
 # Kris Musard - Validation Cloud Challenge Submission
 
-## Pre-requisites
+## System Requirements
 
 - bash/zsh (mac, linux, or windows wsl)
 - docker
