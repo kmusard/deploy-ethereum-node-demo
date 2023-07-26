@@ -25,6 +25,8 @@ alias vcc-tf='vcc_tf'
 
 2) Launch ethereum node
 
+##### Initialize terraform
+
 ```bash
 kmusard@DESKTOP-0BNO49H:~/kris-vcc$ vcc-tf init
 
@@ -48,6 +50,8 @@ If you ever set or change modules or backend configuration for Terraform,
 rerun this command to reinitialize your working directory. If you forget, other
 commands will detect it and remind you to do so if necessary.
 ```
+
+##### Deploy AWS resources
 
 ```bash
 kmusard@DESKTOP-0BNO49H:~/kris-vcc$ vcc-tf apply -auto-approve
@@ -81,7 +85,7 @@ ip = "X.X.X.X"
 3) :clock1: Wait 1-2 minutes after the terraform container launches the EC2 instance. The resulting instance will come fully configured with the following:
 
     - geth 
-        - installed, connected to mainnet, connected to prysm, syncing.
+        - installed, connected to mainnet, connected to prysm, syncing (default/fast mode).
     - prysm 
         - installed, connected to BEACON, connected to geth, syncing.
     - prometheus
