@@ -157,7 +157,7 @@ A top/k9s like terminal interface is launched. The list of connected peers is re
 
 ### Security
 
-I have conciously focused on the blockchain sync, cli/grafana visualiation, and ease of use in running the project. This is largely due to time constraints, and mention on the last note that security would be covered in the review. I am prepared to discuss security enhancements for production deployments in detail. The AWS account which this project runs in is currently dedicated for this project, and will be completely wiped following the excercise.
+I have conciously focused on the blockchain sync, cli/grafana visualization, and ease of use in running the project. This is largely due to time constraints, and mention on the last note that security would be covered in the review. I am prepared to discuss security enhancements for production deployments in detail. The AWS account which this project runs in is currently dedicated for this project, and will be completely wiped following the excercise.
 
 ### Additional aliases & files
 
