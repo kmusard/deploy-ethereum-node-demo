@@ -9,7 +9,7 @@
 
 ### :warning: ***All commands will be run from a terminal window in the root of this repository***
 
-### :warning: ***Docker download messages are normal when running the vcc commands for the very the first time***
+### :warning: ***Docker download messages are normal when running the vcc commands for the first time***
 1) Setup shell environment
 
 ```bash
@@ -81,11 +81,11 @@ ip = "X.X.X.X"
 3) :clock1: Wait 1-2 minutes after the terraform container launches the EC2 instance. The resulting instance will come fully configured with the following:
 
     - geth 
-        - installed, connected to mainnet, connected to prysm, syncing
+        - installed, connected to mainnet, connected to prysm, syncing.
     - prysm 
-        - installed, connected to BEACON, connected to geth, syncing
+        - installed, connected to BEACON, connected to geth, syncing.
     - prometheus
-        - installed, scraping geth, node_exporter, and itself
+        - installed, scraping geth, node_exporter, and itself.
     - grafana
         - installed, prometheus data source configured, and pre-populated with an example custom dashboard. 
     - All components are run as linux systemd services with automatic restart on process exit. Stdout is also captured, tagged, and logged to syslog.
@@ -104,7 +104,7 @@ Prysm: http://X.X.X.X:3500
 
 6) Click "Skip" when prompted to update the default password.
 
-7) Click the top search bar. Look for "Ethereum Mainnet Node" under recent dashboards
+7) Click the top search bar. Look for "Ethereum Mainnet Node" under recent dashboards.
 
 ![Alt text](assets/dashboard-search.png)
 
@@ -136,14 +136,14 @@ Jul 26 02:08:17 ip-172-31-26-54 geth[3946]: INFO [07-26|02:08:17.599] Syncing: c
 
 ### :warning: ***Part B requires the instance from Part A to still be online***
 
-1) Build the go source
+1) Build the go source.
 
 ```bash
 kmusard@DESKTOP-0BNO49H:~/kris-vcc$ vcc-build
 all modules verified
 ```
 
-2) Run the go binary alias (grabs IP saved during the earlier terraform run)
+2) Run the go binary alias (grabs IP saved during the earlier terraform run).
 
 ```bash
 kmusard@DESKTOP-0BNO49H:~/kris-vcc$ vcc-peers
