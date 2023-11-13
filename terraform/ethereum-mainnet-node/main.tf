@@ -16,10 +16,29 @@ data "aws_ami" "ubuntu" {
   owners = ["099720109477"] # Canonical
 }
 
+resource "aws_vpc" "ethereum_vpc" {
+  cidr_block           = "10.0.0.0/16"
+  enable_dns_support   = true
+  enable_dns_hostnames = true
+  tags = {
+    Name = "ethereum-vpc"
+  }
+}
+
+resource "aws_subnet" "ethereum_subnet" {
+  vpc_id     = aws_vpc.ethereum_vpc.id
+  cidr_block = "10.0.1.0/24"
+
+  tags = {
+    Name = "main-subnet"
+  }
+}
+
+
 # https://docs.prylabs.network/docs/prysm-usage/p2p-host-ip#determine-your-ip-addresses
-resource aws_security_group "ethereum_mainnet_node" {
+resource "aws_security_group" "ethereum_mainnet_node" {
   description = "ethereum mainnet node"
-  vpc_id      = "vpc-00fb614383877b2a3"
+  vpc_id      = aws_vpc.ethereum_vpc.id
   tags = {
     Name = "ethereum-mainnet-node"
   }
@@ -27,8 +46,9 @@ resource aws_security_group "ethereum_mainnet_node" {
     create_before_destroy = true
   }
 }
+
 resource "aws_vpc_security_group_egress_rule" "outbound" {
-  description = "outbound all"
+  description       = "outbound all"
   security_group_id = aws_security_group.ethereum_mainnet_node.id
   from_port         = -1
   to_port           = -1
@@ -112,27 +132,23 @@ resource "aws_vpc_security_group_ingress_rule" "execution_listener_udp" {
 resource "aws_instance" "ethereum_mainnet_node" {
   ami                         = data.aws_ami.ubuntu.id
   associate_public_ip_address = true
-  instance_type               = "i4i.large"
-  key_name                    = "ethereum-mainnet-node"
+  instance_type               = var.instance_type
+  key_name                    = "eth-node-demo"
   root_block_device {
     volume_size = 20
   }
   vpc_security_group_ids = [aws_security_group.ethereum_mainnet_node.id]
   # public subnet
-  subnet_id       = "subnet-05c72ad17f0a2043b"
+  subnet_id = aws_subnet.ethereum_subnet.id
 
   tags = {
     Name = "ethereum-mainnet-node"
   }
   # Ethereum node startup script
-  user_data = filebase64("${path.module}/bootstrap.sh") 
+  user_data = filebase64("${path.module}/bootstrap.sh")
 }
 
 resource "local_file" "ip" {
   content  = aws_instance.ethereum_mainnet_node.public_ip
   filename = "${path.module}/ip.txt"
-}
-
-output "ip" {
-  value = aws_instance.ethereum_mainnet_node.public_ip
 }

@@ -1,7 +1,7 @@
 version: "3"
 services:
   geth:
-    container_name: vcc-geth
+    container_name: geth
     image: ethereum/client-go:v1.12.0
     command: --ipcdisable --http.addr=0.0.0.0 --authrpc.addr=0.0.0.0 --authrpc.vhosts='*' --authrpc.jwtsecret=/jwt.hex
     ports:
@@ -12,7 +12,7 @@ services:
       - /mnt/d/ethereum/execution:/root/.ethereum
       - ./jwt.hex.example:/jwt.hex
   prysm:
-    container_name: vcc-prysm
+    container_name: prysm
     image: gcr.io/prysmaticlabs/prysm/beacon-chain:stable
     command: --accept-terms-of-use --checkpoint-sync-url=http://testing.mainnet.beacon-api.nimbus.team/ --genesis-beacon-api-url=http://testing.mainnet.beacon-api.nimbus.team/ --datadir=/data --jwt-secret=/jwt.hex --rpc-host=0.0.0.0 --grpc-gateway-host=0.0.0.0 --monitoring-host=0.0.0.0 --execution-endpoint=http://geth:8551
     ports:

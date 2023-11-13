@@ -1,7 +1,34 @@
-# Kris Musard - Validation Cloud Challenge Submission
+# EC2 Ethereum Node Deployment Demo
+
+**This repository was prepared for the interviewing process of an unnamed SaaS startup**
+
+**The project consists of two parts**
+
+- Part A
+    - Automate the deployment of an ethereum node connected to the ethereum mainnet and beacon (proof-of-stake) chains. 
+    - Utilize the geth client to connect to mainnet
+    - Utilize the prysm client to connect to beacon net
+    - Automate the configuration of prometheus metrics and a grafana dashboard
+
+- Part B
+    - Write a Go program which displays the connected peer list of the deployed ethereum node
+    - Refresh the connected peer list every two seconds
+
+**Implementation**
+
+- Part A
+    - The env.sh script provides shell alias 'eth-demo-tf' which uses terraform to launch an EC2 instance
+    - The bootstrap.sh script is run via EC2 userdata. Ethereum clients are connected. Prometheus and grafana are configured
+
+- Part B
+    - The env.sh script provides shell aliases 'eth-demo-build' to build the go source and 'eth-demo-peers' to run the program
+    - The Go program uses terminal libraries common to other tools such as k9s
+ 
 
 ## System Requirements
 
+- AWS Account
+- 
 - bash/zsh (mac, linux, or windows wsl)
 - docker
 
@@ -9,18 +36,18 @@
 
 ### :warning: ***All commands will be run from a terminal window in the root of this repository***
 
-### :warning: ***Docker download messages are normal when running the vcc commands for the first time***
+### :warning: ***Docker download messages are normal when running the eth-demo-* commands for the first time***
 1) Setup shell environment
 
 ```bash
-kmusard@DESKTOP-0BNO49H:~/kris-vcc$ source env.sh 
-kmusard@DESKTOP-0BNO49H:~/kris-vcc$ alias | grep vcc
-alias vcc-build='vcc_build'
-alias vcc-endpoints='vcc_endpoints'
-alias vcc-logs='vcc_logs'
-alias vcc-peers='vcc_peers'
-alias vcc-ssh='vcc_ssh_connect'
-alias vcc-tf='vcc_tf'
+$ source env.sh 
+$ alias | grep eth-demo
+alias eth-demo-build='eth_demo_build'
+alias eth-demo-endpoints='eth_demo_endpoints'
+alias eth-demo-logs='eth_demo_logs'
+alias eth-demo-peers='eth_demo_peers'
+alias eth-demo-ssh='eth_demo_ssh_connect'
+alias eth-demo-tf='eth_demo_tf'
 ```
 
 2) Launch ethereum node
@@ -28,7 +55,7 @@ alias vcc-tf='vcc_tf'
 ##### Initialize terraform
 
 ```bash
-kmusard@DESKTOP-0BNO49H:~/kris-vcc$ vcc-tf init
+$ eth-demo-tf init
 
 Initializing the backend...
 
@@ -54,7 +81,7 @@ commands will detect it and remind you to do so if necessary.
 ##### Deploy AWS resources
 
 ```bash
-kmusard@DESKTOP-0BNO49H:~/kris-vcc$ vcc-tf apply -auto-approve
+$ eth-demo-tf apply -auto-approve
 data.aws_ami.ubuntu: Reading...
 data.aws_ami.ubuntu: Read complete after 0s [id=ami-0af9d24bd5539d7af]
 
@@ -97,7 +124,7 @@ ip = "X.X.X.X"
 4) View the grafana dashboard. Hopefully, your terminal supports clickable hyper-links.  If not, please copy paste the grafana link from your terminal output to a browser window.
 
 ```bash
-kmusard@DESKTOP-0BNO49H:~/kris-vcc$ vcc-endpoints 
+$ eth-demo-endpoints 
 Raw IP: X.X.X.X
 Grafana: http://X.X.X.X:3000
 Prometheus: http://X.X.X.X:9090
@@ -119,7 +146,7 @@ Prysm: http://X.X.X.X:3500
 9) Once ready, switch back to the terminal. Confirm the blockchain sync by remotely tailing the server logs.
 
 ```bash
-kmusard@DESKTOP-0BNO49H:~/kris-vcc$ vcc-logs
+$ eth-demo-logs
 Jul 26 02:07:55 ip-172-31-26-54 prysm.sh[3981]: time="2023-07-26 02:07:55" level=info msg="Called new payload with optimistic block" payloadBlockHash=0x15322b43fb4e prefix=blockchain slot=6724922
 Jul 26 02:07:55 ip-172-31-26-54 prysm.sh[3981]: time="2023-07-26 02:07:55" level=info msg="Called new payload with optimistic block" payloadBlockHash=0x71c46dfe86cb prefix=blockchain slot=6724923
 Jul 26 02:07:55 ip-172-31-26-54 prysm.sh[3981]: time="2023-07-26 02:07:55" level=info msg="Called new payload with optimistic block" payloadBlockHash=0xed49b6423b19 prefix=blockchain slot=6724924
@@ -143,40 +170,34 @@ Jul 26 02:08:17 ip-172-31-26-54 geth[3946]: INFO [07-26|02:08:17.599] Syncing: c
 1) Build the go source.
 
 ```bash
-kmusard@DESKTOP-0BNO49H:~/kris-vcc$ vcc-build
+$ eth-demo-build
 all modules verified
 ```
 
 2) Run the go binary alias (grabs IP saved during the earlier terraform run).
 
 ```bash
-kmusard@DESKTOP-0BNO49H:~/kris-vcc$ vcc-peers
+$ eth-demo-peers
 ```
 
 A top/k9s like terminal interface is launched. The list of connected peers is refreshed every two seconds.  Hit CTRL+C to exit.
 
 ![Alt text](assets/peers.png)
 
-## Additional Notes
-
-### Security
-
-I have conciously focused on the blockchain sync, cli/grafana visualization, and ease of use in running the project. This is largely due to time constraints, and mention on the last note that security would be covered in the review. I am prepared to discuss security enhancements for production deployments in detail. The AWS account which this project runs in is currently dedicated for this project, and will be completely wiped following the excercise.
-
 ### Additional aliases & files
 
-- Feel free to connect over ssh and inspect the ethereum node:
+- To connect over ssh and inspect the ethereum node:
 
 ```bash
-vcc-ssh
+eth-demo-ssh
 ```
 
-- A Docker compose configuration exists in docker/. I had limited success syncing the blockchain to my desktop due to low peer counts. I briefly experimented with port forwarding from my comcast router -> windows desktop -> wsl -> docker in wsl, but had to time box it. The Docker compose configuration still achieved the primary purpose of part B local development.
+- A Docker compose configuration exists in docker/. Syncing the blockchain to a desktop may be inconsistent due to low peer counts. The Docker compose configuration still assists with local development.
 
 - The raw JSON for the gzipped & base64 block of the bootstrap script is located in assets/dashboard.json. It may also be downloaded from the grafana console under the dashboard settings.
 
 ## Cleanup
 
 ```bash
-vcc-tf destroy -auto-approve
+eth-demo-tf destroy -auto-approve
 ```
