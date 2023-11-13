@@ -28,7 +28,6 @@
 ## System Requirements
 
 - AWS Account
-- 
 - bash/zsh (mac, linux, or windows wsl)
 - docker
 
